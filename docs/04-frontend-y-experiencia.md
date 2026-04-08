@@ -234,3 +234,4 @@ Una pantalla se considera lista cuando:
 
 - Alcance total: [`01-alcance-total-del-mvp.md`](01-alcance-total-del-mvp.md)
 - Ruta, orden y avance: [`07-ruta-de-construccion-y-avance.md`](07-ruta-de-construccion-y-avance.md)
+- Bitácora de implementación: [`08-bitacora-de-implementacion.md`](08-bitacora-de-implementacion.md)

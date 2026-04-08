@@ -16,7 +16,9 @@ Lee en este orden:
    Documento humano de **alcance total**: qué es el proyecto, qué resuelve, qué entra, qué no entra y qué significa “MVP listo”.
 3. **[`docs/07-ruta-de-construccion-y-avance.md`](docs/07-ruta-de-construccion-y-avance.md)**  
    Documento humano de **ruta + progreso**: dónde estamos, qué sigue, qué incluye cada hito y con qué evidencia se cierra.
-4. **`docs/02` a `docs/06`**  
+4. **[`docs/08-bitacora-de-implementacion.md`](docs/08-bitacora-de-implementacion.md)**  
+   Bitácora cronológica breve: qué ya se ejecutó, qué quedó validado y qué se hizo en cada paso.
+5. **`docs/02` a `docs/06`**  
    Documentos técnicos de apoyo para implementar áreas concretas sin improvisar.
 
 ## 2. Qué controla cada documento
@@ -26,6 +28,7 @@ Lee en este orden:
 | `README.md` | Punto de entrada y mapa humano de lectura |
 | `docs/01-alcance-total-del-mvp.md` | Alcance total del producto y definición del MVP |
 | `docs/07-ruta-de-construccion-y-avance.md` | Ruta operativa única, orden, avance y cierre por hitos |
+| `docs/08-bitacora-de-implementacion.md` | Registro cronológico breve de lo ejecutado y validado |
 | `docs/02` a `docs/06` | Soporte técnico por área |
 | `docs/anexos/01`, `02` y `03` | Apoyo puntual de configuración, permisos y glosario |
 
@@ -33,6 +36,7 @@ Lee en este orden:
 
 - `01` explica **qué producto se construye**
 - `07` explica **cómo se construye y cómo se marca el avance**
+- `08` explica **qué se ejecutó realmente en cada paso ya trabajado**
 - `02` a `06` explican **cómo implementar cada área técnica**
 
 ---
@@ -115,6 +119,7 @@ La base de autorización se define por **capacidades/permisos granulares** resue
 | `docs/05-reglas-de-negocio-e-integraciones.md` | Reglas del dominio e integraciones |
 | `docs/06-despliegue-y-operacion.md` | Ambientes, operación y despliegue |
 | `docs/07-ruta-de-construccion-y-avance.md` | Ruta operativa única, orden, avance y cierre |
+| `docs/08-bitacora-de-implementacion.md` | Bitácora breve de implementación validada |
 | `docs/anexos/01-variables-y-configuracion.md` | Variables y configuración concreta |
 | `docs/anexos/02-transiciones-y-permisos.md` | Estados, permisos y transiciones |
 | `docs/anexos/03-glosario.md` | Definiciones canónicas de términos y vocabulario de dominio |
@@ -130,8 +135,9 @@ Secuencia recomendada:
 1. entender el alcance en `docs/01-alcance-total-del-mvp.md`
 2. ubicar el hito y el siguiente paso en `docs/07-ruta-de-construccion-y-avance.md`
 3. implementar un paso pequeño
-4. verificar evidencia mínima
-5. marcar avance SOLO en `docs/07-ruta-de-construccion-y-avance.md`
+4. registrar el detalle ejecutado en `docs/08-bitacora-de-implementacion.md`
+5. verificar evidencia mínima
+6. marcar avance SOLO en `docs/07-ruta-de-construccion-y-avance.md`
 
 ---
 
