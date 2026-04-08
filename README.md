@@ -113,7 +113,7 @@ La base de autorización se define por **capacidades/permisos granulares** resue
 | Archivo | Autoridad principal |
 | --- | --- |
 | `docs/01-alcance-total-del-mvp.md` | Qué producto se construye, qué entra en MVP y qué no |
-| `docs/02-arquitectura-y-modelo-de-datos.md` | Arquitectura, stack, entidades y estructura técnica |
+| `docs/02-arquitectura-y-modelo-de-datos.md` | Arquitectura, stack, entidades, estructura técnica y explicación de cómo se conectan las tecnologías |
 | `docs/03-api-backend-y-jobs.md` | Backend, API, contratos y estrategia de jobs |
 | `docs/04-frontend-y-experiencia.md` | UI, pantallas, dashboards y experiencia por rol |
 | `docs/05-reglas-de-negocio-e-integraciones.md` | Reglas del dominio e integraciones |

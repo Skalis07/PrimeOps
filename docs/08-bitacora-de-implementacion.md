@@ -57,3 +57,27 @@
   - existe `apps/api/app/api/routes/health.py`
   - la ruta esperada queda definida como `GET /api/v1/health`
   - no hay código de base de datos ni migraciones todavía
+
+### A3 — Configurar PostgreSQL local y conexión
+
+- **Estado:** ejecutado y validado
+- **Objetivo:** dejar preparada la configuración local de PostgreSQL y el cableado mínimo de conexión para FastAPI, sin mezclar todavía ORM ni migraciones.
+- **Se hizo:**
+  - ampliación de `apps/api/app/core/config.py` con variables `POSTGRES_*`, `DATABASE_URL`, `FRONTEND_URL` y armado de URL de conexión
+  - agregado de `apps/api/.env.example` con valores locales seguros y ejemplo opcional de `DATABASE_URL`
+  - agregado de la dependencia `psycopg[binary]` en `apps/api/pyproject.toml` para conexión PostgreSQL sin incorporar aún SQLAlchemy
+  - creación de `apps/api/app/db/connection.py` con apertura de conexión y chequeo mínimo `SELECT 1`
+  - creación de `apps/api/app/db/__init__.py` para exponer el módulo de conexión de forma convencional
+  - ampliación de `apps/api/app/api/routes/health.py` con `GET /api/v1/health/database` para validación humana de conectividad local
+- **No se hizo todavía:**
+  - modelos SQLAlchemy
+  - `Base` declarativa
+  - manejo de sesiones ORM
+  - configuración de Alembic
+  - migraciones iniciales
+  - cambios de frontend
+- **Comprobación humana simple:**
+  - existe `apps/api/.env.example` con `POSTGRES_*` y ejemplo comentado de `DATABASE_URL`
+  - existe `apps/api/app/db/connection.py`
+  - la ruta esperada queda definida como `GET /api/v1/health/database`
+  - la conexión usa `psycopg` directo y NO introduce SQLAlchemy ni Alembic todavía
