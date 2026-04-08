@@ -138,3 +138,26 @@
   - existe `apps/web/app/` con `layout.tsx`, `page.tsx` y `globals.css`
   - la página raíz declara un contenido mínimo y NO introduce todavía auth ni features de negocio
   - no se agregaron cambios en backend ni se marcó A5 como validado en `07-ruta-de-construccion-y-avance.md`
+
+### A6 — Definir configuración compartida y tipos base
+
+- **Estado:** ejecutado y validado
+- **Objetivo:** dejar una base mínima y compartida en `packages/` para que web y api puedan reutilizar contratos simples sin adelantar todavía lógica de dominio ni tooling extra del monorepo.
+- **Se hizo:**
+  - reemplazo de `packages/.gitkeep` por estructura real de paquetes compartidos
+  - creación de `packages/config/` como paquete mínimo para constantes públicas, convenciones de entorno y referencias locales seguras del monorepo
+  - creación de `packages/shared-types/` como paquete mínimo para tipos TypeScript compartidos entre frontend y backend
+  - definición en `packages/config/src/index.ts` de apps soportadas, nombres legibles, URLs locales de referencia, prefijo API y rutas convencionales de archivos `.env`
+  - definición en `packages/shared-types/src/index.ts` de ambiente base, envelope de API, error base y contrato mínimo de healthcheck
+  - agregado de `README.md` en ambos paquetes para dejar claro qué cubren y qué queda fuera en esta etapa
+- **No se hizo todavía:**
+  - workspaces reales del monorepo
+  - instalación de dependencias, lockfiles, builds o tests
+  - importación efectiva desde `apps/web` o `apps/api`
+  - tipos de dominio, auth, clientes API, integraciones o modelos de negocio
+- **Comprobación humana simple:**
+  - existen `packages/config` y `packages/shared-types`
+  - ambos paquetes tienen `package.json`, `README.md` y `src/index.ts`
+  - `packages/config` solo expone constantes y referencias seguras, sin secretos
+  - `packages/shared-types` solo define contratos base transversales y NO modelos del dominio
+  - `07-ruta-de-construccion-y-avance.md` sigue mostrando A6 como pendiente hasta validación humana

@@ -73,7 +73,7 @@ Dejar la base mínima del monorepo operativa para poder empezar features reales.
 - [x] **A3** Configurar PostgreSQL local y conexión.
 - [x] **A4** Configurar SQLAlchemy base y Alembic.
 - [x] **A5** Inicializar frontend Next.js mínimo.
-- [ ] **A6** Definir configuración compartida y tipos base.
+- [x] **A6** Definir configuración compartida y tipos base.
 
 **Checklist verificable**
 

@@ -132,6 +132,27 @@ Igual que en el backend, este paso no busca construir ya la experiencia completa
 - todavía no hay auth, dashboard ni catálogo
 - `layout.tsx` y `page.tsx` ya marcan la forma base de trabajo del frontend con App Router
 
+### A6 — Configuración compartida y tipos base
+
+**Qué aporta**
+
+Deja una base mínima en `packages/` para compartir contratos simples entre web y api sin inventar todavía dominio ni tooling avanzado del monorepo.
+
+La idea correcta AQUÍ era preparar cimientos, no adelantarse a Hito 2. Por eso se agregan solo piezas transversales y seguras: configuración pública de referencia y tipos TypeScript base.
+
+**Archivos clave**
+
+- `packages/config/src/index.ts` — concentra constantes compartidas seguras del monorepo. Define apps conocidas, URLs locales de referencia, prefijo API y convención de archivos de entorno.
+- `packages/config/README.md` — deja documentado el alcance real del paquete y aclara que todavía no maneja secretos ni integraciones reales.
+- `packages/shared-types/src/index.ts` — define tipos transversales mínimos. Incluye ambiente base, envelope de API, error común y contrato simple de healthcheck.
+- `packages/shared-types/README.md` — explica que este paquete evita duplicación temprana de contratos sin meterse todavía en modelos de negocio.
+
+**Qué conviene entender de este paso**
+
+- `packages/config` NO es un gestor mágico de configuración; solo centraliza referencias seguras y convenciones compartidas
+- `packages/shared-types` NO modela usuarios, productos, pedidos ni auth; solo deja contratos base reutilizables
+- se evitó a propósito conectar estos paquetes a builds, workspaces o imports reales para mantener A6 pequeño, aislado y revisable
+
 ### Qué quedó intencionalmente fuera todavía
 
 - modelos de negocio
