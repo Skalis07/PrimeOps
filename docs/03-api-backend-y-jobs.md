@@ -223,6 +223,7 @@ Reglas del contrato:
     "status": "pending_payment",
     "channel": "asistida",
     "assisted_context": "presencial",
+    "assigned_to_user_id": "usr_vendedor_01",
     "fulfillment_type": "pickup",
     "items": [
       {
@@ -267,6 +268,12 @@ Reglas del contrato:
 - el pedido puede quedar en `pending_payment` sin haber descontado inventario todavía
 - cuando el pago pasa a `paid`, el backend debe registrar el descuento de stock con `InventoryMovement.type = sale`
 - si el pedido se cancela o el pago falla antes de `paid`, no hay liberación de stock porque nunca hubo reserva previa
+
+### Regla mínima de asignación del MVP
+
+- un pedido `online` puede quedar sin `assigned_to_user_id`
+- un pedido `asistida` se autoasigna al `admin` o `vendedor` autenticado que la tramitó
+- esa autoasignación no implica que todos los pedidos deban tener asignación formal en el MVP
 
 ### Regla mínima de cumplimiento
 

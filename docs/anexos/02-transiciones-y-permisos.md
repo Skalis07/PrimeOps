@@ -4,7 +4,7 @@
 
 | Desde | Hacia | Quién puede | Condición |
 | --- | --- | --- | --- |
-| `draft` | `pending_payment` | cliente / admin / vendedor | pedido válido, stock disponible y canal registrado; NO reserva stock |
+| `draft` | `pending_payment` | cliente / admin / vendedor | pedido válido, stock disponible y canal registrado; NO reserva stock; si es `asistida`, se autoasigna al usuario interno que lo tramitó |
 | `pending_payment` | `paid` | sistema | webhook o validación proveedor correcta; descuenta stock de variantes |
 | `pending_payment` | `cancelled` | cliente / admin / vendedor autorizado | aún no pagado o política válida; no requiere liberar stock porque no hubo reserva |
 | `paid` | `preparing` | vendedor / admin | pedido confirmado, stock descontado y asignable |

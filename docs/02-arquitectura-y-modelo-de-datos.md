@@ -310,6 +310,7 @@ Order
 | `channel` | enum | sí | `online` / `asistida` |
 | `assisted_context` | enum nullable | no | `presencial` / `remota` cuando aplica |
 | `assisted_by_user_id` | FK nullable | no | obligatorio si `channel = asistida` |
+| `assigned_to_user_id` | FK nullable | no | responsable operativo cuando exista; en `asistida` se autoasigna al usuario que la tramita |
 | `fulfillment_type` | enum | sí | `pickup` / `delivery` |
 | `delivery_address_snapshot` | text nullable | no | obligatorio cuando `fulfillment_type = delivery` |
 | `status` | enum | sí | ciclo del pedido |
@@ -461,6 +462,8 @@ Forma mínima recomendada de `selected_modifiers_snapshot` por opción elegida:
 - `fulfillment_type = pickup` habilita el estado operativo `ready_for_pickup`
 - `fulfillment_type = delivery` habilita el estado operativo `shipped`
 - el pedido puede compartir estados previos (`draft`, `pending_payment`, `paid`, `preparing`) sin importar el tipo de cumplimiento
+- un pedido `online` puede existir sin `assigned_to_user_id`
+- un pedido `asistida` se autoasigna al `admin` o `vendedor` autenticado que lo tramitó
 - no se documentan subflujos logísticos más finos en el MVP
 
 ### Ticket

@@ -74,6 +74,8 @@
 - crear un pedido valida stock disponible, pero NO reserva stock en el MVP
 - el descuento de stock ocurre cuando el pago queda confirmado (`paid`)
 - si el pedido se cancela o falla antes de `paid`, no se libera stock porque todavía no había salida efectiva
+- un pedido `online` puede quedar sin asignación operativa formal
+- un pedido `asistida` se autoasigna al `admin` o `vendedor` que tramitó la venta
 - `Order` debe declarar `fulfillment_type = pickup | delivery`
 - si `fulfillment_type = delivery`, el pedido debe persistir `delivery_address_snapshot`
 - `ready_for_pickup` solo aplica a pedidos `pickup`

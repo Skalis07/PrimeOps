@@ -191,6 +191,7 @@ Cerrar el flujo base desde carrito hasta seguimiento operativo del pedido.
 - [ ] La creación de pedido valida stock disponible, pero NO reserva stock en `pending_payment`.
 - [ ] Cada línea del pedido puede guardar `item_note` (máximo 255 caracteres) y snapshots de modificadores/precios con ids, nombres y deltas persistidos.
 - [ ] Cada pedido registra `online` o `asistida` y, si es asistida, guarda `presencial` o `remota`.
+- [ ] Los pedidos `online` pueden quedar sin asignación, pero los pedidos `asistida` se autoasignan al usuario interno que los tramitó.
 - [ ] Cada pedido declara `pickup` o `delivery`, y solo exige dirección cuando corresponde.
 - [ ] Cada cambio de estado deja historial consultable.
 - [ ] Un pedido puede asignarse a un vendedor bajo reglas válidas.
