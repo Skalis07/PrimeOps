@@ -1,6 +1,6 @@
 # 07. Ruta de construcción y avance
 
-> Este es el **único documento humano operativo** del proyecto.
+> Este es el **documento humano operativo principal** del proyecto.
 >
 > Úsalo para responder, en un solo lugar:
 >
@@ -16,6 +16,7 @@
 - Si un ítem está **[ ]**, sigue pendiente.
 - Un hito solo se considera cerrado cuando su evidencia mínima ya existe.
 - Este archivo reemplaza la separación anterior entre roadmap, build plan y checklist.
+- El detalle cronológico de lo ejecutado vive en [`08-bitacora-de-implementacion.md`](08-bitacora-de-implementacion.md).
 
 ## 2. Estado actual
 
@@ -66,7 +67,7 @@ Dejar la base mínima del monorepo operativa para poder empezar features reales.
 
 **Pasos en orden**
 
-- [ ] **A1** Crear estructura del monorepo y carpetas base.
+- [x] **A1** Crear estructura del monorepo y carpetas base.
 - [ ] **A2** Inicializar backend FastAPI mínimo.
 - [ ] **A3** Configurar PostgreSQL local y conexión.
 - [ ] **A4** Configurar SQLAlchemy base y Alembic.

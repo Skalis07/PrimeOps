@@ -195,7 +195,8 @@ En otras palabras: el MVP sí admite varios usuarios internos con rol `vendedor`
 ## 13. Cómo se relaciona con el resto de la documentación
 
 - Este documento define el **alcance total del MVP**.
-- La ruta de construcción y el avance real viven en [`07-ruta-de-construccion-y-avance.md`](07-ruta-de-construccion-y-avance.md).
+- La ruta de construcción y checklist oficial viven en [`07-ruta-de-construccion-y-avance.md`](07-ruta-de-construccion-y-avance.md).
+- El detalle cronológico de implementación vive en [`08-bitacora-de-implementacion.md`](08-bitacora-de-implementacion.md).
 - Los documentos `02` a `06` explican decisiones técnicas para implementar áreas específicas.
 
 ## 14. Documento siguiente
