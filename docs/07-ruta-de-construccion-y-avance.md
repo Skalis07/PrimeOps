@@ -70,7 +70,7 @@ Dejar la base mínima del monorepo operativa para poder empezar features reales.
 - [x] **A1** Crear estructura del monorepo y carpetas base.
 - [x] **A2** Inicializar backend FastAPI mínimo.
 - [x] **A3** Configurar PostgreSQL local y conexión.
-- [ ] **A4** Configurar SQLAlchemy base y Alembic.
+- [x] **A4** Configurar SQLAlchemy base y Alembic.
 - [ ] **A5** Inicializar frontend Next.js mínimo.
 - [ ] **A6** Definir configuración compartida y tipos base.
 

@@ -81,3 +81,28 @@
   - existe `apps/api/app/db/connection.py`
   - la ruta esperada queda definida como `GET /api/v1/health/database`
   - la conexión usa `psycopg` directo y NO introduce SQLAlchemy ni Alembic todavía
+
+### A4 — Configurar SQLAlchemy base y Alembic
+
+- **Estado:** ejecutado y validado
+- **Objetivo:** dejar el andamiaje mínimo y convencional de ORM y migraciones dentro de `apps/api` para que los próximos hitos puedan crear modelos y revisiones sin improvisar estructura.
+- **Se hizo:**
+  - agregado de dependencias mínimas `sqlalchemy` y `alembic` en `apps/api/pyproject.toml`
+  - creación de `apps/api/app/db/base.py` con `DeclarativeBase` y `MetaData` con naming convention para constraints e índices
+  - creación de `apps/api/app/db/session.py` con `engine`, `SessionLocal` y dependencia `get_db_session()` preparada para FastAPI
+  - ampliación de `apps/api/app/db/__init__.py` para exponer `Base`, `engine`, `SessionLocal` y `get_db_session`
+  - creación de `apps/api/app/models/__init__.py` como punto de importación de modelos futuros para descubrimiento de metadata
+  - creación de `apps/api/alembic.ini`, `apps/api/alembic/env.py`, `apps/api/alembic/script.py.mako` y `apps/api/alembic/versions/.gitkeep` como scaffold mínimo de migraciones
+  - ajuste de comentario en `apps/api/.env.example` para dejar explícito que `DATABASE_URL` sirve también para SQLAlchemy y Alembic
+- **No se hizo todavía:**
+  - ningún modelo de dominio (`User`, `Product`, `Order`, etc.)
+  - ninguna tabla de negocio
+  - ninguna revisión o migración inicial generada
+  - ejecución de comandos de Alembic, instalaciones, builds o tests
+  - cambios fuera de `apps/api` y esta bitácora
+- **Comprobación humana simple:**
+  - existen `apps/api/app/db/base.py` y `apps/api/app/db/session.py`
+  - existe `apps/api/app/models/__init__.py` como placeholder de metadata
+  - existen `apps/api/alembic.ini` y la carpeta `apps/api/alembic/` con `env.py`, `script.py.mako` y `versions/`
+  - `apps/api/alembic/env.py` toma la URL desde `app.core.config.settings`
+  - no aparece todavía ningún modelo de negocio ni migración aplicada
