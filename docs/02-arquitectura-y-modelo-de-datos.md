@@ -23,6 +23,246 @@ El sistema se diseña como un **monorepo profesional** con frontend y backend se
 
 ---
 
+## 2.1 Justificación breve del stack
+
+### Next.js + TypeScript + Bootstrap
+
+- **Next.js** se eligió porque da una base seria para frontend web moderno, rutas, composición de UI y crecimiento posterior sin inventar estructura desde cero.
+- **TypeScript** reduce ambigüedad entre frontend, backend y documentación al forzar contratos más claros.
+- **Bootstrap** se eligió para avanzar rápido con una UI consistente y pragmática, sin gastar el MVP en sistema de diseño complejo.
+
+### FastAPI
+
+- se eligió por su velocidad de desarrollo, tipado claro y buen encaje con APIs modernas
+- permite modelar un backend limpio para negocio sin la pesadez de frameworks más opinados
+- es una base adecuada para crecer luego hacia validaciones, servicios e integraciones
+
+### SQLAlchemy + Alembic
+
+- **SQLAlchemy** se eligió para tener un ORM maduro y flexible, capaz de modelar bien un dominio con relaciones, estados y trazabilidad
+- **Alembic** acompaña naturalmente a SQLAlchemy y permite versionar cambios de base de datos con disciplina
+- esta combinación da más control que soluciones demasiado mágicas y encaja bien con un proyecto que quiere dejar arquitectura seria
+
+### PostgreSQL local sin Docker
+
+- PostgreSQL se eligió porque es una base robusta, estándar y adecuada para relaciones, historial y consistencia transaccional
+- correrlo localmente sin Docker reduce fricción en este entorno concreto y acelera el arranque del MVP
+- se privilegia una base profesional real antes que una solución liviana pero limitada
+
+### Auth0
+
+- se eligió para no gastar el MVP construyendo autenticación desde cero
+- resuelve login y flujo de identidad con una herramienta probada
+- permite separar correctamente autenticación externa de autorización interna por roles/capacidades
+
+### Stripe test mode
+
+- se eligió porque permite demostrar flujo de pago realista sin dinero real
+- da webhooks y estados de pago creíbles para modelar el dominio correctamente
+- evita inventar un sistema de pago falso demasiado simplificado
+
+### HTML + PDF
+
+- se eligió porque permite generar comprobantes y reportes reutilizando plantillas web
+- reduce complejidad frente a motores documentales más pesados para este MVP
+
+### Google Drive OAuth de usuario
+
+- se eligió porque encaja mejor con una pyme real que opera con cuentas Google normales
+- evita adelantar complejidad de service accounts o infraestructura enterprise
+- permite guardar documentos del negocio en una cuenta controlada por el usuario
+
+### Resend
+
+- se eligió para resolver correo transaccional de forma simple y moderna
+- cubre bien confirmaciones, avisos y notificaciones del MVP sin meter una plataforma de mensajería más compleja de la necesaria
+
+### Criterio general de selección
+
+El stack no se eligió para impresionar con tecnología exótica. Se eligió para equilibrar:
+
+- velocidad de construcción del MVP
+- claridad arquitectónica
+- bajo dolor operativo en entorno local
+- capacidad real de crecimiento posterior sin rehacer el núcleo
+
+---
+
+## 2.2 Cómo encajan las tecnologías entre sí
+
+Este apartado explica **qué rol cumple cada tecnología** y **cómo se conectan entre sí** dentro del proyecto.
+
+### Frontend: Next.js + TypeScript + Bootstrap
+
+- **Next.js** es el framework del frontend. Vive en `apps/web` y se encarga de renderizar páginas, manejar rutas y estructurar la aplicación web.
+- **TypeScript** corre dentro del frontend para tipar datos, props, respuestas de API y contratos internos. Su función es reducir errores por forma de datos mal interpretada.
+- **Bootstrap** resuelve la capa visual base: grillas, formularios, tablas, botones y layout. No gobierna la lógica; solo acelera una UI consistente.
+
+En conjunto:
+
+- Next.js organiza la aplicación web
+- TypeScript tipa la lógica y los contratos
+- Bootstrap da la base visual del MVP
+
+### Backend: FastAPI
+
+- **FastAPI** vive en `apps/api`.
+- expone endpoints HTTP
+- valida entradas y salidas
+- aplica reglas de negocio desde backend
+- centraliza permisos, estados y trazabilidad
+
+Su trabajo es recibir peticiones desde Next.js, procesarlas correctamente y hablar con la base de datos y las integraciones externas.
+
+### Base de datos: PostgreSQL
+
+- **PostgreSQL** es la fuente principal de verdad del sistema.
+- guarda usuarios internos, clientes, productos, variantes, movimientos, pedidos, pagos, tickets y reseñas.
+- el backend no debe depender de memoria temporal para el negocio; el estado real vive aquí.
+
+### ORM: SQLAlchemy
+
+Un **ORM** (Object-Relational Mapper) es una capa que conecta el mundo del código con el mundo de la base de datos relacional.
+
+En vez de escribir todo como SQL manual todo el tiempo, el ORM permite trabajar con:
+
+- modelos
+- relaciones
+- consultas
+- mapeo entre objetos Python y tablas SQL
+
+En este proyecto:
+
+- **SQLAlchemy** será la capa que conecte FastAPI con PostgreSQL de forma estructurada.
+- FastAPI define endpoints y reglas.
+- SQLAlchemy modela entidades y consultas.
+- PostgreSQL persiste el estado real.
+
+### Migraciones: Alembic
+
+Una migración es un cambio versionado de la estructura de la base de datos.
+
+**Alembic** trabaja sobre SQLAlchemy para:
+
+- crear nuevas tablas
+- cambiar columnas
+- agregar índices o constraints
+- llevar la base de datos del proyecto de una versión estructural a otra
+
+Conexión correcta entre estas piezas:
+
+- **SQLAlchemy** define el modelo de datos en código
+- **Alembic** versiona y aplica cambios estructurales derivados de ese modelo
+- **PostgreSQL** ejecuta esos cambios y almacena los datos reales
+
+En simple:
+
+- SQLAlchemy = cómo se modela la base en Python
+- Alembic = cómo se evolucionan esos cambios sin romper orden
+- PostgreSQL = dónde vive finalmente la información
+
+### Autenticación: Auth0
+
+**Auth0** resuelve la autenticación, no toda la seguridad del dominio.
+
+Su rol es:
+
+- login
+- emisión/validación inicial de identidad
+- redirecciones de acceso
+
+Pero la autorización del negocio sigue dentro del sistema:
+
+- Auth0 dice **quién eres**
+- la app dice **qué puedes hacer**
+
+Por eso el flujo correcto es:
+
+1. el usuario inicia sesión con Auth0
+2. el frontend obtiene identidad/token
+3. el backend FastAPI valida ese token
+4. la app carga el usuario interno, su rol y sus capacidades
+5. el sistema decide permisos reales sobre pedidos, stock, tickets, etc.
+
+### Pagos: Stripe test mode
+
+**Stripe** entra como proveedor de pagos del MVP.
+
+Su rol es:
+
+- generar checkout
+- simular un flujo realista de pago
+- enviar webhooks/eventos
+
+El flujo esperado es:
+
+1. Next.js dispara el inicio del checkout
+2. FastAPI crea la intención o sesión necesaria
+3. Stripe procesa el pago en modo test
+4. Stripe devuelve eventos al backend
+5. FastAPI confirma el pago y actualiza el pedido
+
+La fuente de verdad del pago NO es la pantalla del navegador, sino el backend validando el resultado del proveedor.
+
+### Correo: Resend
+
+**Resend** cubre correo transaccional.
+
+Entra cuando el backend necesita enviar cosas como:
+
+- confirmación de pedido
+- aviso de ticket resuelto
+- notificaciones operativas simples
+
+No gobierna el negocio; solo transporta mensajes salientes.
+
+### Archivos y documentos: HTML + PDF + Google Drive
+
+- el sistema genera documentos desde plantillas HTML/PDF
+- esos documentos pueden guardarse localmente al inicio
+- luego pueden subirse a Google Drive
+
+**Google Drive OAuth de usuario** entra como integración de almacenamiento del negocio.
+
+Su rol es:
+
+- recibir autorización del usuario admin
+- permitir subir/reportar archivos en la cuenta del negocio
+
+No reemplaza la base de datos: la base guarda referencias y trazabilidad; Drive guarda archivos.
+
+### Cómo se conecta todo el sistema
+
+Flujo resumido:
+
+1. **Next.js** muestra la interfaz
+2. **TypeScript** asegura contratos y formas de datos en frontend
+3. **Bootstrap** da estructura visual rápida
+4. **Auth0** autentica al usuario
+5. **FastAPI** recibe peticiones y aplica reglas del dominio
+6. **SQLAlchemy** modela y consulta datos
+7. **Alembic** mantiene la evolución estructural de la base
+8. **PostgreSQL** persiste el estado real
+9. **Stripe** resuelve pagos test
+10. **Resend** envía correos
+11. **Google Drive** guarda documentos cuando corresponda
+
+### Resumen mental correcto
+
+- **Next.js** = interfaz
+- **TypeScript** = contratos del frontend
+- **Bootstrap** = base visual
+- **FastAPI** = reglas y API
+- **SQLAlchemy** = puente entre código Python y base relacional
+- **Alembic** = versionado de cambios de base de datos
+- **PostgreSQL** = persistencia real
+- **Auth0** = identidad/login
+- **Stripe** = pagos
+- **Resend** = correo
+- **Google Drive** = almacenamiento documental externo
+
+---
+
 ## 3. Estructura recomendada del monorepo
 
 ```text
