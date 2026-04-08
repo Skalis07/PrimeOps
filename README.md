@@ -49,7 +49,7 @@ Lee en este orden:
 
 La aplicación objetivo es una plataforma web full-stack para una pyme con:
 
-- catálogo y productos
+- catálogo con `Product` como entidad comercial y `ProductVariant` como unidad vendible/stockeable
 - inventario con movimientos auditables
 - pedidos con historial y asignación
 - pagos online en modo de prueba
@@ -61,6 +61,18 @@ La aplicación objetivo es una plataforma web full-stack para una pyme con:
 - operación comercial por canales `online` y `asistida`
 
 IMPORTANTE: esa lista describe el **objetivo de implementación**, no el estado actual del código del repositorio.
+
+### Cierre documental del modelo MVP
+
+Para evitar ambigüedad entre catálogo, stock y pedidos, el MVP documentado queda cerrado así:
+
+- `Product` = entidad comercial base que agrupa la oferta visible
+- `ProductVariant` = unidad concreta que se vende, se cobra y se controla en inventario
+- `sku` = código operativo del negocio, distinto del `id` técnico de base de datos
+- `barcode` = dato opcional cuando la operación lo necesita
+- el inventario pertenece a `ProductVariant`, nunca al `Product`
+- cada `OrderItem` guarda snapshots inmutables de nombre, variante, `sku`, precio, modificadores y nota
+- el MVP admite **nota corta por ítem** y **modifier groups/options simples**, sin prometer un configurador genérico gigante
 
 ## 4. Taxonomía oficial del MVP
 
@@ -105,7 +117,7 @@ La base de autorización se define por **capacidades/permisos granulares** resue
 | `docs/07-ruta-de-construccion-y-avance.md` | Ruta operativa única, orden, avance y cierre |
 | `docs/anexos/01-variables-y-configuracion.md` | Variables y configuración concreta |
 | `docs/anexos/02-transiciones-y-permisos.md` | Estados, permisos y transiciones |
-| `docs/anexos/03-glosario.md` | Definiciones de términos |
+| `docs/anexos/03-glosario.md` | Definiciones canónicas de términos y vocabulario de dominio |
 
 ---
 

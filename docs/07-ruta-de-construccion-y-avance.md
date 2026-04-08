@@ -127,7 +127,8 @@ Permitir administrar productos y controlar stock con trazabilidad básica.
 
 **Incluye**
 
-- categorías y productos
+- categorías, productos y variantes vendibles
+- modificadores simples por producto
 - filtros básicos
 - movimientos de inventario
 - ajustes manuales con motivo
@@ -135,24 +136,26 @@ Permitir administrar productos y controlar stock con trazabilidad básica.
 
 **Pasos en orden**
 
-- [ ] **C1** Crear `Category` y `Product`.
+- [ ] **C1** Crear `Category`, `Product` y `ProductVariant`.
 - [ ] **C2** Crear `InventoryMovement`.
-- [ ] **C3** Construir API catálogo.
-- [ ] **C4** Construir tabla de productos en frontend.
+- [ ] **C3** Construir API catálogo con variantes y modificadores simples.
+- [ ] **C4** Construir tabla/vista de productos con acceso a variantes.
 - [ ] **C5** Implementar ajuste manual con motivo.
 - [ ] **C6** Mostrar historial y alertas de stock.
 
 **Checklist verificable**
 
 - [ ] Se pueden crear y listar categorías.
-- [ ] Se pueden crear y listar productos.
+- [ ] Se pueden crear y listar productos con sus variantes.
+- [ ] Cada variante tiene `sku` propio y `barcode` opcional.
 - [ ] El catálogo permite al menos filtros básicos utilizables.
-- [ ] Cada cambio de stock genera un movimiento persistido.
+- [ ] Cada cambio de stock de variante genera un movimiento persistido con actor, tipo, referencia de origen, delta, motivo y stock resultante.
+- [ ] Existen grupos/opciones de modificadores simples sin convertir el dominio en un configurador genérico.
 - [ ] El ajuste manual exige motivo registrable.
 - [ ] Existen alertas básicas o señal visible de stock bajo.
 
 **Evidencia mínima para cerrar**  
-Catálogo usable + stock actualizable con movimientos auditables + señal de stock bajo visible.
+Catálogo usable con variantes + stock actualizable por variante con movimientos auditables + señal de stock bajo visible.
 
 ### Hito 4. Pedidos
 
@@ -164,9 +167,12 @@ Cerrar el flujo base desde carrito hasta seguimiento operativo del pedido.
 - carrito básico
 - creación de pedido
 - validación de stock
+- snapshots inmutables por línea
+- nota corta por ítem y modificadores simples
 - historial de estados
 - asignación a vendedor
 - canal comercial y contexto de venta asistida
+- cumplimiento mínimo `pickup` / `delivery`
 - cancelación controlada
 
 **Pasos en orden**
@@ -181,14 +187,16 @@ Cerrar el flujo base desde carrito hasta seguimiento operativo del pedido.
 **Checklist verificable**
 
 - [ ] El cliente puede agregar productos a un carrito básico.
-- [ ] El backend crea pedidos válidos desde el carrito.
-- [ ] La creación de pedido valida stock disponible.
+- [ ] El backend crea pedidos válidos desde el carrito usando `product_variant_id`.
+- [ ] La creación de pedido valida stock disponible, pero NO reserva stock en `pending_payment`.
+- [ ] Cada línea del pedido puede guardar `item_note` (máximo 255 caracteres) y snapshots de modificadores/precios con ids, nombres y deltas persistidos.
 - [ ] Cada pedido registra `online` o `asistida` y, si es asistida, guarda `presencial` o `remota`.
+- [ ] Cada pedido declara `pickup` o `delivery`, y solo exige dirección cuando corresponde.
 - [ ] Cada cambio de estado deja historial consultable.
 - [ ] Un pedido puede asignarse a un vendedor bajo reglas válidas.
 
 **Evidencia mínima para cerrar**  
-Existe un pedido real creado desde el flujo normal o asistido, con validación de stock, historial, canal comercial y asignación visible.
+Existe un pedido real creado desde el flujo normal o asistido, con validación de stock por variante, snapshots de línea, historial, canal comercial, cumplimiento mínimo y asignación visible.
 
 ### Hito 5. Pagos
 
@@ -218,10 +226,11 @@ Conectar el pedido con un pago sandbox consistente y trazable.
 - [ ] El frontend muestra retorno o resultado del pago.
 - [ ] El backend recibe y procesa webhook relevante.
 - [ ] El estado del pedido se sincroniza con el estado del pago.
+- [ ] El pago confirmado genera el descuento de stock por variante con movimiento auditable.
 - [ ] Se genera comprobante PDF para un pago confirmado.
 
 **Evidencia mínima para cerrar**  
-Un pedido puede pagarse en sandbox, actualizar su estado correctamente y producir comprobante descargable.
+Un pedido puede pagarse en sandbox, actualizar su estado correctamente, descontar stock solo al confirmar pago y producir comprobante descargable.
 
 ### Hito 6. Soporte y reseñas
 
@@ -231,8 +240,8 @@ Cubrir postventa básica y feedback del cliente con control administrativo.
 **Incluye**
 
 - tickets por rol
-- conversación visible
-- notas internas
+- conversación visible con mensajes públicos
+- notas internas separadas
 - reseñas con rating
 - moderación administrativa
 
@@ -249,9 +258,10 @@ Cubrir postventa básica y feedback del cliente con control administrativo.
 
 - [ ] Cliente y equipo pueden operar tickets según su rol.
 - [ ] El ticket soporta conversación o hilo visible.
-- [ ] Existen notas internas separadas del mensaje público.
+- [ ] Cada ticket usa prioridad mínima `low` / `normal` / `high` sin inventar SLA para el MVP.
+- [ ] Existen mensajes `public` y notas `internal` con visibilidad filtrada según rol.
 - [ ] El cliente puede registrar reseña con rating.
-- [ ] Administración puede moderar reseñas con trazabilidad mínima.
+- [ ] Administración puede moderar reseñas con estados `published` / `hidden` y trazabilidad mínima.
 
 **Evidencia mínima para cerrar**  
 Existe un ticket operable de punta a punta y una reseña moderable sin mezclar permisos públicos e internos.
@@ -334,6 +344,7 @@ La demo puede ejecutarse con datos preparados, mostrar el flujo principal comple
 
 - flujo pedido + pago fake
 - control de stock con movimientos
+- coherencia del modelo `Product` / `ProductVariant` / snapshots
 - tickets
 - permisos por rol
 - trazabilidad y logs mínimos

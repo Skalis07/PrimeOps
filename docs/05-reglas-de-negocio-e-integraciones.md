@@ -12,6 +12,8 @@
 | No eliminar reseña moderada del histórico interno | preserva auditoría |
 | No exponer acciones sensibles sin permiso | protege operación |
 | No tratar `presencial` o `remota` como canales independientes | evita confundir detalle operativo con canal comercial |
+| No confundir `sku` con `id` técnico | evita mezclar identidad de base de datos con código operativo |
+| No reconstruir pedidos históricos desde catálogo vivo | preserva verdad comercial y auditabilidad |
 
 ---
 
@@ -19,11 +21,15 @@
 
 ### Reglas cerradas
 
-- el stock no se controla solo por `Product.stock`
+- el stock pertenece a `ProductVariant`, no a `Product`
+- `Product` puede existir sin ser unidad vendible directa
 - todo cambio significativo genera `InventoryMovement`
-- el movimiento debe guardar actor, delta, motivo y stock resultante
+- `InventoryMovement` referencia `product_variant_id`
+- el movimiento debe guardar `actor_type`, `actor_user_id?`, `type`, `origin_type`, `origin_ref_id?`, `delta_quantity`, `reason` y `stock_after`
 - los ajustes negativos manuales exigen `reason`
 - el histórico debe ser visible en panel interno
+- `InventoryMovement` es append-only: los errores se corrigen con un nuevo movimiento, no editando el anterior
+- `origin_type` + `origin_ref_id` deben permitir rastrear la referencia concreta del movimiento, por ejemplo un `Order`, un ajuste manual o un restock registrado
 
 ### Regla de operación comercial
 
@@ -40,6 +46,40 @@
 - corrección por conteo físico
 - restock manual
 
+### Regla de catálogo mínimo
+
+- `Product` es el contenedor comercial visible
+- `ProductVariant` es la unidad vendible y cobrable
+- `sku` vive en la variante como código operativo único
+- `barcode` es opcional
+- `cost` es dato interno y no tiene por qué exponerse al cliente
+
+### Modificadores y notas de pedido
+
+- los modificadores del MVP son grupos/opciones simples asociados a `Product`
+- las selecciones de modificadores se copian al `OrderItem` como snapshot simple con ids estables, nombres visibles y `price_delta`
+- los modificadores pueden sumar precio a la línea
+- los modificadores NO descuentan stock ni activan reglas complejas en el MVP
+- `item_note` es texto corto libre por línea de pedido con máximo de 255 caracteres
+
+---
+
+## 2.1 Pedidos, snapshots y trazabilidad comercial
+
+- `OrderItem` debe conservar `product_variant_id` para trazabilidad técnica
+- `OrderItem` debe conservar snapshots inmutables de nombre de producto, nombre de variante, `sku`, precio unitario, modificadores y nota
+- el snapshot de modificadores debe guardar como mínimo `modifier_group_id`, `modifier_group_name`, `modifier_option_id`, `modifier_option_name` y `price_delta`
+- si luego cambia el catálogo, el histórico del pedido sigue mostrando lo vendido originalmente
+- el cálculo del total del pedido se hace al confirmar la orden y queda persistido; no se recalcula en cada lectura histórica
+- crear un pedido valida stock disponible, pero NO reserva stock en el MVP
+- el descuento de stock ocurre cuando el pago queda confirmado (`paid`)
+- si el pedido se cancela o falla antes de `paid`, no se libera stock porque todavía no había salida efectiva
+- `Order` debe declarar `fulfillment_type = pickup | delivery`
+- si `fulfillment_type = delivery`, el pedido debe persistir `delivery_address_snapshot`
+- `ready_for_pickup` solo aplica a pedidos `pickup`
+- `shipped` solo aplica a pedidos `delivery`
+- el MVP no modela tracking, carrier ni promesa de entrega detallada
+
 ---
 
 ## 3. Soporte y postventa
@@ -48,9 +88,15 @@
 
 - todo ticket tiene autor y timestamps
 - puede o no vincularse a un pedido, pero si es postventa debe poder hacerlo
-- existen mensajes públicos e internos
+- existen mensajes públicos (`public`) e internos (`internal`)
 - el historial no se borra
 - soporte ve solo el contexto necesario del pedido asociado
+- un mensaje `public` puede verlo el cliente y el staff autorizado
+- una nota `internal` solo puede verla el staff autorizado
+- el cliente nunca crea ni lee mensajes `internal`
+- todo ticket declara `priority = low | normal | high`
+- si no se informa prioridad al crear un ticket, el backend debe usar `normal`
+- la prioridad ordena trabajo y visibilidad operativa, pero NO habilita SLA ni automatizaciones extra en el MVP
 
 ### Casos de uso contemplados
 
@@ -71,8 +117,8 @@ Sin embargo, la base de autorización no se congela en esos nombres. La arquitec
 En el MVP:
 
 - admin concentra capacidades amplias
-- vendedor opera catálogo, inventario y ventas asistidas bajo permisos válidos
-- soporte se enfoca en tickets y contexto parcial de pedidos
+- vendedor opera catálogo, inventario y ventas asistidas bajo capacidades explícitas de catálogo, stock y pedidos
+- soporte se enfoca en tickets y en lectura del contexto operativo mínimo del pedido asociado, sin gestionar catálogo ni estados de pedido
 - cliente opera solo sobre sus propios recursos
 
 No entra en alcance una UI avanzada para editar permisos por usuario. Si luego hiciera falta, se agrega sobre la misma base de capacidades.
@@ -85,7 +131,10 @@ No entra en alcance una UI avanzada para editar permisos por usuario. Si luego h
 | --- | --- |
 | Quién reseña | cliente autenticado |
 | Qué publica | rating + comentario |
-| Moderación | admin puede ocultar/moderar |
+| Estado mínimo | `published` / `hidden` |
+| Alta inicial | nace en `published` si pasa validaciones |
+| Moderación | admin puede alternar `published` / `hidden` con nota interna opcional |
+| Visibilidad pública | solo se listan reseñas `published` |
 | Histórico | la moderación no borra trazabilidad |
 | Futuro | condicionar reseña a compra confirmada |
 
@@ -118,6 +167,8 @@ No entra en alcance una UI avanzada para editar permisos por usuario. Si luego h
 - uso: pagos fake/test
 - objetivo: demostrar checkout y confirmación realista
 - regla: la verdad del pago viene del backend, no del frontend
+- `Payment` representa el intento/transacción del pedido
+- `PaymentEvent` conserva el evento del proveedor para auditoría y diagnóstico
 
 ### Google Drive con OAuth de usuario
 
@@ -164,6 +215,8 @@ Eso NO significa prometer desde ahora integraciones o canales específicos. La r
 
 - el núcleo modela categorías extensibles
 - el MVP cierra solo lo necesario para `online` y `asistida`
+- el catálogo puede crecer a más variantes, reglas o tipos de producto SI una necesidad futura lo justifica
+- los modificadores pueden evolucionar después, pero hoy quedan en grupos/opciones simples
 - cualquier expansión futura debe justificarse por necesidad real, no por ansiedad de arquitectura
 
 ---

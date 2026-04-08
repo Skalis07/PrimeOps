@@ -4,12 +4,12 @@
 
 | Desde | Hacia | Quién puede | Condición |
 | --- | --- | --- | --- |
-| `draft` | `pending_payment` | cliente / admin / vendedor | pedido válido, stock disponible y canal registrado |
-| `pending_payment` | `paid` | sistema | webhook o validación proveedor correcta |
-| `pending_payment` | `cancelled` | cliente / admin / vendedor autorizado | aún no pagado o política válida |
-| `paid` | `preparing` | vendedor / admin | pedido confirmado y asignable |
-| `preparing` | `ready_for_pickup` | vendedor / admin | retiro habilitado |
-| `preparing` | `shipped` | vendedor / admin | despacho confirmado |
+| `draft` | `pending_payment` | cliente / admin / vendedor | pedido válido, stock disponible y canal registrado; NO reserva stock |
+| `pending_payment` | `paid` | sistema | webhook o validación proveedor correcta; descuenta stock de variantes |
+| `pending_payment` | `cancelled` | cliente / admin / vendedor autorizado | aún no pagado o política válida; no requiere liberar stock porque no hubo reserva |
+| `paid` | `preparing` | vendedor / admin | pedido confirmado, stock descontado y asignable |
+| `preparing` | `ready_for_pickup` | vendedor / admin | `fulfillment_type = pickup` |
+| `preparing` | `shipped` | vendedor / admin | `fulfillment_type = delivery` y dirección registrada |
 | `ready_for_pickup` | `completed` | vendedor / admin | entrega finalizada |
 | `shipped` | `completed` | vendedor / admin | entrega confirmada |
 | cualquier estado operativo | `cancelled` | solo admin o regla explícita | debe quedar auditado |
@@ -66,16 +66,18 @@ Nadie debe poder pasar un pedido a `paid` manualmente desde UI normal.
 | Ver dashboard vendedor | Sí | Sí | No | No |
 | Ver dashboard cliente propio | No | No | Sí | No |
 | Ver dashboard soporte | Sí | No | No | Sí |
-| Crear producto | Sí | Parcial según política | No | No |
+| Crear producto | Sí | Sí, si tiene `catalog.manage` | No | No |
 | Ajustar stock | Sí | Sí | No | No |
 | Crear pedido propio | Sí | Sí | Sí | No |
 | Crear pedido asistido | Sí | Sí | No | No |
 | Definir canal y contexto asistido del pedido | Sí | Sí | No | No |
-| Cambiar estado de pedido | Sí | Sí | No | Parcial en casos acotados |
-| Crear ticket | Sí | Parcial | Sí | Sí |
-| Responder ticket | Sí | Parcial | Sí en su propio ticket | Sí |
+| Cambiar estado de pedido | Sí | Sí, si tiene `orders.change_status` | No | No |
+| Crear ticket | Sí | Sí, en nombre de un cliente o para postventa asociada | Sí, en sus propios casos | Sí |
+| Responder ticket público | Sí | Sí, solo en tickets asignados o vinculados a la venta que operó | Sí, en su propio ticket | Sí |
+| Crear nota interna de ticket | Sí | No | No | Sí |
 | Moderar reseña | Sí | No | No | No |
-| Exportar reportes | Sí | Parcial | No | Parcial |
+| Exportar reportes comerciales | Sí | Sí, si tiene `reports.export` | No | No |
+| Exportar reportes operativos de soporte | Sí | No | No | Sí, si tiene `reports.export` |
 | Reintentar job | Sí | No | No | No |
 
 ---
@@ -90,7 +92,10 @@ Estas capacidades sirven como base arquitectónica del MVP:
 - `orders.create_assisted`
 - `orders.change_status`
 - `orders.view_internal`
+- `tickets.create`
 - `tickets.respond`
+- `tickets.create_internal_note`
+- `tickets.view_order_context`
 - `tickets.assign`
 - `reviews.moderate`
 - `reports.export`
