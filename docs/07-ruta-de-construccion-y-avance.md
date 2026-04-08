@@ -17,6 +17,7 @@
 - Un hito solo se considera cerrado cuando su evidencia mínima ya existe.
 - Este archivo reemplaza la separación anterior entre roadmap, build plan y checklist.
 - El detalle cronológico de lo ejecutado vive en [`08-bitacora-de-implementacion.md`](08-bitacora-de-implementacion.md).
+- La explicación condensada por hito y archivos clave vive en [`09-guia-de-implementacion-explicada.md`](09-guia-de-implementacion-explicada.md).
 
 ## 2. Estado actual
 
@@ -71,7 +72,7 @@ Dejar la base mínima del monorepo operativa para poder empezar features reales.
 - [x] **A2** Inicializar backend FastAPI mínimo.
 - [x] **A3** Configurar PostgreSQL local y conexión.
 - [x] **A4** Configurar SQLAlchemy base y Alembic.
-- [ ] **A5** Inicializar frontend Next.js mínimo.
+- [x] **A5** Inicializar frontend Next.js mínimo.
 - [ ] **A6** Definir configuración compartida y tipos base.
 
 **Checklist verificable**
