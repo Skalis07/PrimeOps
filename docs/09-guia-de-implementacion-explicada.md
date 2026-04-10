@@ -74,13 +74,14 @@ Este paso cierra la parte de “cómo hablar con la base de datos” antes de in
 **Archivos clave**
 
 - `apps/api/.env.example` — ejemplo seguro de variables locales. Muestra qué valores espera el backend sin exponer secretos reales.
-- `apps/api/app/core/config.py` — arma la configuración y la URL de base de datos. Es el lugar donde la app aprende cómo conectarse a PostgreSQL.
+- `apps/api/app/core/config.py` — carga automáticamente `apps/api/.env`, arma la configuración y construye la URL de base de datos. Es el punto donde queda resuelto el cableado local entre variables, backend y PostgreSQL.
+- `apps/api/pyproject.toml` — declara `python-dotenv` como dependencia mínima para que la carga automática de `apps/api/.env` sea explícita, convencional y fácil de revisar.
 - `apps/api/app/db/connection.py` — conexión directa y chequeo simple a PostgreSQL. Sirve para validar conectividad sin meter todavía ORM.
 - `apps/api/app/api/routes/health.py` — agrega chequeo de base de datos. Extiende el healthcheck para saber no solo si la API vive, sino si también puede hablar con PostgreSQL.
 
 **Qué conviene entender de este paso**
 
-- la app ya sabe cómo conectarse a PostgreSQL
+- la app ya sabe cómo conectarse a PostgreSQL y ahora también carga `apps/api/.env` automáticamente como parte del wiring local de configuración
 - todavía no existen modelos ni tablas del dominio
 - se validó primero la conectividad básica antes de meter complejidad ORM
 
@@ -169,6 +170,42 @@ Lo que hizo este hito fue dejar la **infraestructura base del proyecto**. El dom
 ### Por qué importa este hito
 
 Sin esta base, los siguientes hitos quedarían desordenados o forzarían decisiones técnicas improvisadas. Aquí se fija el terreno donde luego vivirán auth, catálogo, pedidos, pagos y soporte.
+
+---
+
+## Hito 2 — Auth y roles
+
+### Qué aporta este hito
+
+Empieza a convertir el scaffold técnico en una aplicación con identidad real. Primero se resuelve entrada de usuario; después vendrán validación backend, contexto interno y permisos de negocio.
+
+### B1 — Integrar Auth0 en frontend
+
+**Qué aporta**
+
+Deja el frontend preparado para iniciar sesión con Auth0 desde una ruta pública y con un provider compatible con Next.js App Router, pero SIN fingir todavía que la seguridad completa ya existe.
+
+Este paso importa porque separa bien los conceptos: aquí solo se prepara la puerta de entrada del login. La validación del token, `/me`, el usuario interno y los roles viven en pasos posteriores.
+
+**Archivos clave**
+
+- `apps/web/package.json` — declara `@auth0/auth0-react` como dependencia del scaffold frontend. No instala nada por sí mismo, pero documenta qué librería usará esta etapa.
+- `apps/web/.env.local.example` — documenta las variables públicas mínimas que el frontend necesita para Auth0 y API, siempre con placeholders seguros.
+- `apps/web/lib/auth0-config.ts` — centraliza lectura de variables y permite saber si el scaffold está listo para intentar login o debe quedarse en modo seguro.
+- `apps/web/components/providers/app-auth0-provider.tsx` — envuelve el App Router con `Auth0Provider` solo cuando la configuración pública está completa.
+- `apps/web/components/auth/login-entry.tsx` — concentra la UI mínima del login: botón placeholder si faltan variables y llamada a `loginWithRedirect()` cuando exista configuración real.
+- `apps/web/app/login/page.tsx` — crea la ruta pública `/login`, usada como entrada humana al login.
+- `apps/web/app/auth/callback/page.tsx` — crea la ruta técnica `/auth/callback`, usada para recibir el retorno de Auth0 sin mezclarlo con la pantalla de acceso.
+- `apps/web/app/layout.tsx` — conecta el provider a nivel raíz sin introducir todavía layouts protegidos.
+
+**Qué conviene entender de este paso**
+
+- Auth0 en frontend NO significa que la autorización del sistema ya exista
+- este scaffold está hecho para revisión humana y configuración manual posterior, no para cerrar aún el hito completo
+- el login real seguirá necesitando crear tenant/app/API en Auth0, cargar variables reales y probar callbacks en navegador antes de marcar B1 como validado
+- la app **SPA** entrega `Domain` y `Client ID`; la **API de PrimeOps** entrega la `Audience`
+- en esta configuración inicial se dejó la API con política más estricta para **user access** (`Allow via client-grant`) y **client access** deshabilitado (`Deny`)
+- si durante la prueba se crea un usuario en Auth0, ese usuario vive primero en Auth0; la base interna de PrimeOps recién lo conocerá cuando se implementen `/me` y la sincronización de usuario
 
 ---
 

@@ -1,8 +1,8 @@
-# Plataforma de Gestión Comercial para Pyme
+# PrimeOps
 
 Guía de entrada a la documentación del proyecto.
 
-> Este repositorio HOY contiene documentación de producto y de implementación. La aplicación descrita TODAVÍA está planificada; no existe código de la app en este repo al momento de esta versión documental.
+> Este repositorio HOY contiene documentación de producto y una implementación inicial ya empezada. La app todavía NO está completa, pero el monorepo base, el backend mínimo, la conexión local a PostgreSQL, el scaffold de migraciones, el frontend mínimo y el arranque de Auth0 en frontend ya existen.
 
 ---
 
@@ -52,6 +52,16 @@ Lee en este orden:
 - existe la estructura de documentación principal
 - están definidas alcance, arquitectura, módulos, reglas y plan de construcción
 - el repositorio está preparado para handoff de implementación
+
+### Estado actual de implementación
+
+- existe monorepo base (`apps/`, `packages/`)
+- existe backend FastAPI mínimo
+- existe conexión local a PostgreSQL
+- existe scaffold de SQLAlchemy y Alembic
+- existe frontend Next.js mínimo
+- existe scaffold inicial de Auth0 en frontend
+- todavía faltan validación backend de token, `/me`, usuario interno, permisos del dominio y pantallas reales de negocio
 
 ### Estado de implementación planificada
 

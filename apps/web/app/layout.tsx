@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { AppAuth0Provider } from "@/components/providers/app-auth0-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Test Web",
-  description: "Scaffold mínimo de Next.js para el MVP.",
+  title: "PrimeOps",
+  description: "Scaffold mínimo de Next.js para PrimeOps.",
 };
 
 type RootLayoutProps = Readonly<{
@@ -13,7 +14,9 @@ type RootLayoutProps = Readonly<{
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="es">
-      <body>{children}</body>
+      <body>
+        <AppAuth0Provider>{children}</AppAuth0Provider>
+      </body>
     </html>
   );
 }

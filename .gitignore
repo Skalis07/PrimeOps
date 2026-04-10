@@ -6,9 +6,11 @@
 !.env.example
 !.env.sample
 !.env.template
+!.env.local.example
 !**/.env.example
 !**/.env.sample
 !**/.env.template
+!**/.env.local.example
 .envrc
 
 # --- Keys / certificates ---

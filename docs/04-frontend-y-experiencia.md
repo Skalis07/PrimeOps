@@ -20,6 +20,7 @@ Debe permitir:
 | --- | --- | --- |
 | Público | `/` | landing y propuesta de valor |
 | Público | `/login` | entrada a Auth0 |
+| Público | `/auth/callback` | retorno técnico del login Auth0 |
 | Todos | `/dashboard` | punto de entrada según rol |
 | Cliente | `/catalogo` | catálogo con filtros |
 | Cliente | `/producto/[id]` | detalle de producto con variantes y modificadores simples |

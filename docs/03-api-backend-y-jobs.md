@@ -26,6 +26,13 @@ No es solo un CRUD. Debe:
 - filtros por query params
 - enums para estados sensibles
 
+### Nota de integración con Auth0
+
+- la **SPA frontend** usa `Domain` + `Client ID`
+- la **API de PrimeOps** usa un `Identifier` propio, que luego se convierte en la `Audience`
+- el backend NO debe usar la Management API de Auth0 como audience del dominio
+- para esta etapa, la API queda con `User access = Allow via client-grant` y `Client access = Deny`
+
 ### Envelope recomendado
 
 ```json

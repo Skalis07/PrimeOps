@@ -24,14 +24,14 @@
 ### Estado del repositorio
 
 - existe documentación principal y técnica
-- no existe todavía implementación de la app en este repositorio
-- la estructura documental quedó simplificada para seguir el proyecto con dos documentos humanos
+- ya existe una implementación inicial del proyecto en este repositorio
+- la estructura documental quedó simplificada para seguir el proyecto con tres documentos humanos complementarios (`07`, `08`, `09`)
 
 ### Estado del MVP
 
-- **hito actual**: Hito 1 — Base técnica
-- **avance marcado**: 0 de 8 hitos cerrados
-- **siguiente paso recomendado**: A1 — crear estructura base del monorepo y carpetas principales
+- **hito actual**: Hito 2 — Auth y roles
+- **avance marcado**: 1 de 8 hitos cerrados (`Hito 1` completo)
+- **siguiente paso recomendado**: B1 — integrar Auth0 en frontend
 
 ## 3. Cómo usar esta ruta
 
@@ -103,7 +103,7 @@ Cerrar autenticación, contexto de usuario y base de permisos por rol.
 
 **Pasos en orden**
 
-- [ ] **B1** Integrar Auth0 en frontend.
+- [x] **B1** Integrar Auth0 en frontend.
 - [ ] **B2** Validar token en backend.
 - [ ] **B3** Implementar `/me`.
 - [ ] **B4** Implementar sync de usuario interno.
@@ -112,6 +112,7 @@ Cerrar autenticación, contexto de usuario y base de permisos por rol.
 **Checklist verificable**
 
 - [ ] Login con Auth0 inicia y retorna al sistema correctamente.
+- [ ] La SPA frontend queda configurada con `Domain` y `Client ID`, y la API de PrimeOps queda definida con su `Audience`.
 - [ ] Backend valida token y protege endpoints privados.
 - [ ] Existe endpoint `/me` que devuelve contexto del usuario autenticado.
 - [ ] El usuario autenticado se sincroniza o crea en la base interna.

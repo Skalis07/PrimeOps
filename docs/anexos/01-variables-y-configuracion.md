@@ -27,7 +27,7 @@
 | Variable | Obligatoria | Propósito | Ejemplo |
 | --- | --- | --- | --- |
 | `APP_ENV` | Sí | ambiente | `local` |
-| `APP_NAME` | Sí | nombre del servicio | `pyme-api` |
+| `APP_NAME` | Sí | nombre del servicio | `primeops-api` |
 | `API_BASE_URL` | Sí | URL base backend | `http://localhost:8000` |
 | `FRONTEND_URL` | Sí | URL frontend para callbacks | `http://localhost:3000` |
 | `DATABASE_URL` | Sí | conexión PostgreSQL | `postgresql+psycopg://usuario:clave@localhost:5432/pyme_db` |

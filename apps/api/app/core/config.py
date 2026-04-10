@@ -1,11 +1,18 @@
-from dataclasses import dataclass, field
 import os
+from dataclasses import dataclass, field
+from pathlib import Path
 from urllib.parse import quote_plus
+
+from dotenv import load_dotenv
+
+
+BASE_DIR = Path(__file__).resolve().parents[2]
+load_dotenv(BASE_DIR / ".env")
 
 
 @dataclass(frozen=True)
 class Settings:
-    app_name: str = field(default_factory=lambda: os.getenv("APP_NAME", "pyme-api"))
+    app_name: str = field(default_factory=lambda: os.getenv("APP_NAME", "primeops-api"))
     app_env: str = field(default_factory=lambda: os.getenv("APP_ENV", "local"))
     api_base_url: str = field(default_factory=lambda: os.getenv("API_BASE_URL", "http://localhost:8000"))
     frontend_url: str = field(default_factory=lambda: os.getenv("FRONTEND_URL", "http://localhost:3000"))
